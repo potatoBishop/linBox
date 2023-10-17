@@ -84,7 +84,8 @@ def mix_kernel(X, Y=None, degree=3, gamma=x3, coef0=0):
     print(x1,x2,x3,x4)
     return rbf_kernel(X, Y, gamma) * x4 + polynomial_kernel(X, Y, degree, gamma, coef0) * (1-x4)
 
-filename = '/data/gaozhan.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
+# filename = '/data/gaozhan.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
+filename = 'E:\linBox\data\\7yinWu.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
 index=0
 X_tra=[]
 X_te=[]

@@ -29,12 +29,14 @@ zu = linData.dataHandle()
 # ee   = 0.1           # epsilon 判断是否进行惩罚
 
 filename = "E:\linBox\data\gaozhan.txt"
+# filename = 'E:\linBox\data\\7yinWu.txt'     # 读取数据
 
 # bd_low1 = [0, 0.2, 0, 0, 0]
 # bd_up1 = [10, 1.0, 1, 10, 1]
 # v_low1 = [0.001, 0, 0, 0, 0]
 # v_up1 = [1, 0.2, 0, 1, 1]
-quick = [2, 0.199219146556476, 0.7603566551467286, 105.91960701561483, 0.7214001877527543, 0.23994180874780635]
+quick = [3 , 0.5248129931999843 , 0.46450734204692606 , 8.432545078596828 , 2.666104558921362 , 3.251172489258681]
+# quick = [2 , 0.5769422586731177 , 0.2663928207862879 , 9.935440401733374 , 0.46492885276087637 , 159.7514421926793]
 
 dd   = quick[0]   # degree
 cc   = quick[3]   # 惩罚系数
@@ -83,6 +85,7 @@ while num < ci:
     # 查看结果
     print("第", num, "次k折叠训练")
     kf = KFold(n_splits=5, shuffle=False)
+    # kf = KFold(n_splits=5, shuffle=True)
     for train_index, test_index in kf.split(x_all):
         # print('train_index:%s , test_index: %s ' % (train_index, test_index))
         zu.set_selected_id(train_index, test_index)
@@ -100,8 +103,8 @@ while num < ci:
         RMSE_train = linTools.get_RMSE(y_tra, final_svr.predict(x_tra))
         RMsE_test   = linTools.get_RMSE(y_test, final_svr.predict(x_test))
 
-        print('训练集R2        ', r2_train)
-        print('测试集R2        ', r2_test)
+        print('训练集R2        =============', r2_train)
+        print('测试集R2        =============', r2_test)
         print('RMSE(训练集)    ', RMSE_train)
         print('RMSE(测试集)    ', RMsE_test)
 

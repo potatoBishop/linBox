@@ -2,6 +2,7 @@ import math
 
 import numpy
 import numpy as np
+from scipy import sparse
 from sklearn.svm import SVR
 # from numba import jit
 
@@ -55,6 +56,7 @@ class LinKernel:
 
     def set_core_kind(self, kind):
         self.core_kind = kind
+        print("当前核心kind= ", self.core_kind)
 
     # ============================================================================================ 经典核函数方法
     # @jit
@@ -110,35 +112,35 @@ class LinKernel:
                + self.t * self.my_sigmoid(X1, X2) \
                + (1 - self.q - self.t) * self.my_poly(X1, X2)
 
-    def my_kernel5(self, X1, X2):   # rbf + sigmoid + poly
-        return self.q * self.my_rbf(X1, X2) \
-               + self.t * self.my_sigmoid(X1, X2) \
-               + (1 - self.q - self.t) * self.my_poly(X1, X2)
-
     def do_svr(self, x_tra, y_tra):
         """训练集x， 测试集x, 训练集y, 测试集y, 惩罚系数, 阶数, gamma, 不知名参数q """
         # x = np.array(x_tra)  # 处理完成的训练集
         # y = np.array(y_tra)
         svr_hunhe = SVR
 
-        if self.core_kind == 0:     # rbf + sigmoid
+        if self.core_kind == 1 or "rbf+sigmoid":     # rbf + sigmoid
             svr_hunhe = SVR(kernel=self.my_kernel1, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 1:   # rbf + poly
+        elif self.core_kind == 2 or "rbf+poly":   # rbf + poly
             svr_hunhe = SVR(kernel=self.my_kernel2, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 2:   # rbf + linear + poly
+        elif self.core_kind == 3 or "rbf+linear+poly":   # rbf + linear + poly
             svr_hunhe = SVR(kernel=self.my_kernel3, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 3:   # rbf + sigmoid + poly
+        elif self.core_kind == 4 or "rbf+sigmoid+poly":   # rbf + sigmoid + poly
             svr_hunhe = SVR(kernel=self.my_kernel4, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 4:
-            svr_hunhe = SVR(kernel='sigmoid', C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
         elif self.core_kind == 5:
-            svr_hunhe = SVR(kernel=self.my_kernel5, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == "rbf":
-            svr_hunhe = SVR(kernel=self.my_rbf, C=self.cc, gamma=self.gamma)
+            pass
+        elif self.core_kind == 6:
+            pass
+        #     经典核心
+        elif self.core_kind == "t1" or "rbf":
+            svr_hunhe = SVR(kernel=self.my_rbf, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+        elif self.core_kind == "t2" or "sigmoid":
+            svr_hunhe = SVR(kernel=self.my_sigmoid, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+        elif self.core_kind == "t3" or "poly":
+            svr_hunhe = SVR(kernel=self.my_poly, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+        elif self.core_kind == "t4" or "linear":
+            svr_hunhe = SVR(kernel=self.my_linear, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
         else:
             pass
-
-
 
         svr_hunhe.fit(x_tra, y_tra)
         return svr_hunhe
@@ -146,25 +148,31 @@ class LinKernel:
 
     def just_svr(self):
         """训练集x， 测试集x, 训练集y, 测试集y, 惩罚系数, 阶数, gamma, 不知名参数q """
-        # x = np.array(x_tra)  # 处理完成的训练集
-        # y = np.array(y_tra)
         svr_hunhe = SVR
 
-        if self.core_kind == 0:     # rbf + sigmoid
+        if self.core_kind == 1 or "rbf+sigmoid":  # rbf + sigmoid
             svr_hunhe = SVR(kernel=self.my_kernel1, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 1:   # rbf + poly
+        elif self.core_kind == 2 or "rbf+poly":  # rbf + poly
             svr_hunhe = SVR(kernel=self.my_kernel2, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 2:   # rbf + linear + poly
+        elif self.core_kind == 3 or "rbf+linear+poly":  # rbf + linear + poly
             svr_hunhe = SVR(kernel=self.my_kernel3, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 3:   # rbf + sigmoid + poly
+        elif self.core_kind == 4 or "rbf+sigmoid+poly":  # rbf + sigmoid + poly
             svr_hunhe = SVR(kernel=self.my_kernel4, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == 4:
-            svr_hunhe = SVR(kernel='sigmoid', C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
         elif self.core_kind == 5:
-            svr_hunhe = SVR(kernel=self.my_kernel5, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-        elif self.core_kind == "rbf":
-            svr_hunhe = SVR(kernel=self.my_rbf, C=self.cc, gamma=self.gamma)
+            pass
+        elif self.core_kind == 6:
+            pass
+        #     经典核心
+        elif self.core_kind == "t1" or "rbf":
+            svr_hunhe = SVR(kernel=self.my_rbf, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+        elif self.core_kind == "t2" or "sigmoid":
+            svr_hunhe = SVR(kernel=self.my_sigmoid, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+        elif self.core_kind == "t3" or "poly":
+            svr_hunhe = SVR(kernel=self.my_poly, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+        elif self.core_kind == "t4" or "linear":
+            svr_hunhe = SVR(kernel=self.my_linear, C=self.cc, gamma=self.gamma, degree=self.degree, coef0=self.coef)
         else:
             pass
 
         return svr_hunhe
+

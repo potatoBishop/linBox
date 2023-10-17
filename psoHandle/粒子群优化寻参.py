@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import math
 from sklearn.svm import SVR
 
-filename = '7yinWu.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
+# filename = '7yinWu.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
+filename = 'E:\linBox\data\\7yinWu.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
 index=0
 X_tra=[]
 X_te=[]

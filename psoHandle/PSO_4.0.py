@@ -27,10 +27,10 @@ w_min = 0.2
 guoNiHe = 0.93
 
 zu.set_file(filename)   # 文件名
-zu.set_mode(1)          # 0:均匀选择4:1   1:随机选择    2: 留1法
+zu.set_mode(0)          # 0:均匀选择4:1   1:随机选择    2: 留1法
 zu.set_size(85)         # 数据总量
 zu.set_numNeed(17)      # 当mode = 1 时，需要的测试集数量
-kk.set_core_kind(3)     # 设置核函数
+# kk.set_core_kind(2)     # 设置核函数
 
 zu.fenZu()              # 分组并获取训练、测试、全集合
 x_train = zu.get_x()
@@ -86,7 +86,15 @@ class PSO:
         fitness = []
 
         for t in range(self.max_iter):
+            can = t / self.max_iter
+            self.c1 = 2 - can
+            self.c2 = 1 + can
+            self.r1 = random.uniform(0, 1)
+            self.r2 = random.uniform(0, 1)
+            self.w = w_max - (w_max - w_min) * (can ** 2)  # 趋于稳定开始收敛
+            # self.w = w_max - (w_max - w_min) * can  # 趋于稳定开始收敛
             print("==================================================================第 ", t, "次迭代==")
+
             for i in range(self.pN):
                 temp_r2_test, temp_r2_train = self.function(self.pos[i])                        # 获取当前粒子对应参数的 score ，即 训练集R^2
                 if float(temp_r2_test) > float(self.p_fit[i]) and (temp_r2_train < guoNiHe):    # 更新个体最优 and 防止过拟合
@@ -100,17 +108,18 @@ class PSO:
                     print(self.gbest)
 
                 # 更新每一代的权重系数w
-                if 0.5 <= temp_r2_test < 0.83:
-                    self.w = w_max - (w_max - w_min) * (t / self.max_iter) ** 2         # 趋于稳定开始收敛
-                    # print("==================================================================w更新==")
-                else:
-                    self.w = 0.8
+                # if 0.5 <= temp_r2_test < 0.83:
+                #     self.w = w_max - (w_max - w_min) * (can ** 2)         # 趋于稳定开始收敛
+                # else:
+                #     self.w = 0.9
                     # self.w = random.uniform( max(0.5, (t/self.max_iter)), 0.9)                                                        # 随着迭代次数增加，如果一直不到0.7，则w增大，变暴躁
+                # self.w = w_max - (w_max - w_min) * (t / self.max_iter) ** 2  # 趋于稳定开始收敛
 
                 # 更新 每一代的 不同粒子的 速度
                 self.v[i] = (self.w * self.v[i] +
-                             self.c1 * self.r1 * (self.pbest[i] - self.v[i]) +
-                             self.c2 * self.r2 * (self.gbest    - self.v[i]) )
+                             self.c1 * self.r1 * (self.pbest[i] - self.pos[i]) +
+                             self.c2 * self.r2 * (self.gbest    - self.pos[i]) )
+
 
                 # 更新 每一代的 不同粒子的 位置参数
                 self.pos[i] = self.pos[i] + self.v[i]
@@ -119,9 +128,13 @@ class PSO:
                 for j in range(self.dim):
                     if (self.v[i][j] > self.v_up[j]) or (self.v[i][j] < self.v_low[j]):
                         self.v[i][j] = self.v_low[j] + random.uniform(0, 1) * (self.v_up[j] - self.v_low[j])
-
                     if (self.pos[i][j] > self.bd_up[j]) or (self.pos[i][j] < self.bd_low[j]):
                         self.pos[i][j] = self.bd_low[j] + random.uniform(0, 1) * (self.bd_up[j] - self.bd_low[j])
+
+                # 处理 qq + tt > 1 问题
+                while (self.pos[i][1] + self.pos[i][2]) > 1:
+                    self.pos[i][1] = self.bd_low[1] + random.uniform(0, 1) * (self.bd_up[1] - self.bd_low[1])
+                    self.pos[i][2] = self.bd_low[2] + random.uniform(0, 1) * (self.bd_up[2] - self.bd_low[2])
 
             # 收集每次迭代完成的最优score， 存储用于生成图像
             fitness.append(self.fit)
@@ -151,16 +164,28 @@ class PSO:
 # #############################################################################                     main区域
 
 if __name__ == '__main__':
-    #             C,     q,     t,  gamma, coef0
-    bd_low1 = [   0,   0.5,      0,      0,    20 ]
-    bd_up1  = [   10,   1,      0.4,    10,   300 ]
-    v_low1  = [   0,     0,      0,      0,     0  ]
-    v_up1   = [   0.5,   0.5,    0.5,     1,    10  ]
-    dd  = 2
+    #           C,     q,   t,  gamma,  coef0
+    bd_low1 = [  0,    0,   0,     0,    100 ]
+    bd_up1  = [ 20,    1,   1,     10,   300 ]
+    v_low1  = [  0,    0,   0,     0,    0 ]
+    v_up1   = [  1,    1,   1,     1,    1 ]
+    dd = 2
+    kk.set_core_kind(3)  # 设置核函数
 
+    # bd_low1 = [   0,   0.4,      0,      0,    0 ]
+    # bd_up1  = [   2,   1,      0.6,    7,      1 ]
+    # v_low1  = [   0,     0,      0,     0,     0  ]
+    # v_up1   = [   1,   0.5,    0.5,     1,    1  ]
+    # dd  = 2
+
+    # bd_low1 = [   80,    0,      0,      0,    80 ]
+    # bd_up1  = [   120,   1,       1,    10,    120 ]
+    # v_low1  = [   0,     0,      0,      0,     0  ]
+    # v_up1   = [   10,   0.5,    0.5,     1,    10  ]
+    # dd  = 2
     iter1 = 50
 
-    my_pso = PSO(pN=80, dim=5, max_iter=iter1, bd_low=bd_low1, bd_up=bd_up1, v_low=v_low1, v_up=v_up1)
+    my_pso = PSO(pN=50, dim=5, max_iter=iter1, bd_low=bd_low1, bd_up=bd_up1, v_low=v_low1, v_up=v_up1)
     fitness = my_pso.iterator()
 
     '''图像部分'''
