@@ -24,7 +24,7 @@ gg   = 0.2        # gamma
 coco = 0        # coef0
 
 # 设置参数                  =====================================================================================
-filename = 'E:\\linBox\\data\\7引物ci2.txt'
+filename = 'E:\\1Python\\linBox\\data\\7引物ci2.txt'
 zu.set_file(filename)       # 文件名
 zu.set_mode(1)              # 鼠标放在函数上查看文档
 zu.set_dataSize(85)         # 数据总量

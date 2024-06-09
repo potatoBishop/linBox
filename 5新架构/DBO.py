@@ -79,12 +79,13 @@ def DBO(pop, M, filename, dim, lb, ub, function_name, dd ):
     bestX = X[bestI, :]                         # 寻得的最优参数
     Convergence_curve = np.zeros((1, M))        # 返回值
 
-    # 滚球蜣螂=================================
+
     for t in range(M):                          # 开始迭代
         B = np.argmin(pFit[:, 0])               # 最差位置的id
         worse = X[B, :]                         # 全局最差位置
         r2 = np.random.rand(1)                  #
 
+        # 滚球蜣螂=================================
         for i in range(pNum):
             if r2 < 0.9:                # 没遇到障碍物
                 a = np.random.rand(1)   # 是否偏离原来的方向 1 or -1
@@ -120,6 +121,7 @@ def DBO(pop, M, filename, dim, lb, ub, function_name, dd ):
         xLB = Xnew1
         xUB = Xnew2
 
+        # 小蜣螂        =================================
         # 局域最优觅食
         for i in range(pNum + 1, pNum + 5):   # Equation(4)    当前迭代最优
             X[i, :] = (bestXX
