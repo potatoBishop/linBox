@@ -33,9 +33,9 @@ x4=0
 
 
 
-a = random.randint(1, 38);
-b = random.randint(1, 38);
-c = random.randint(1, 38);
+a = random.randint(1, 38)
+b = random.randint(1, 38)
+c = random.randint(1, 38)
 d = random.randint(1, 38)
 e = random.randint(1, 38)
 f = random.randint(1, 38)
@@ -84,8 +84,8 @@ def mix_kernel(X, Y=None, degree=3, gamma=x3, coef0=0):
     print(x1,x2,x3,x4)
     return rbf_kernel(X, Y, gamma) * x4 + polynomial_kernel(X, Y, degree, gamma, coef0) * (1-x4)
 
-# filename = '/data/gaozhan.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
-filename = 'E:\linBox\data\\7yinWu.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
+filename = 'E:\linBox\data\\gaozhan.txt'  # 读取数据
+# filename = 'E:\linBox\data\\7yinWu.txt'  # txt文件和当前脚本在同一目录下，所以不用写具体路径   读取元数据文件  1
 index=0
 X_tra=[]
 X_te=[]
@@ -248,6 +248,7 @@ if __name__ == '__main__':
     #五个维度依次 为C，e, g, w, d
     low = [0,   0,  0,   0]
     up  = [170, 1, 10, 1.0]
+    #    c   coef0  gamma q
     parameters = [NGEN, popsize, low, up]
     pso = PSO(parameters)
     pso.main()

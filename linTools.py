@@ -1,18 +1,20 @@
 import numpy as np
-from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score
-from sklearn.metrics._regression import _check_reg_targets, _assemble_r2_explained_variance
+from sklearn.metrics import mean_squared_error,mean_absolute_error, r2_score
+from sklearn.model_selection import KFold
 from sklearn.utils import check_consistent_length, validate_params
-
 import linData
 
+def get_k_R2():
+    kf = KFold(n_splits=5, shuffle=False)
 
-# def LOO(size, kk):
-#     num = 1
-#     zu = linData.dataHandle()
-#     while num <= size:
-#
-#         num = num + 1
-
+def get_R2(testY, testPredict):
+    # 决定系数：R2（R-Square） 越接近1越好
+    """
+        R² = 1 - SSE / SST  , 所以可以出现负值               \n
+        SSE (残差平方和) = y_actual - y_predicted 的平方和   \n
+        SST (总平方和) = y_actual - y_mean 的平方和          \n
+    """
+    return r2_score(testY, testPredict)
 
 def get_RMSE(testY, testPredict):
     # 均方根误差：RMSE（Root Mean Squard Error）RMSE=sqrt（MSE）
@@ -29,50 +31,13 @@ def get_MAE(testY, testPredict):
     # 范围[0,+∞)，当预测值与真实值完全吻合时等于0，即完美模型；误差越大，该值越大。
     return mean_absolute_error(testY, testPredict)
 
-def get_R2(testY, testPredict):
-    # 决定系数：R2（R-Square）
-    return r2_score(testY, testPredict)
 
-# def get_LOO_R2(
-#             y_true,
-#             y_pred,
-#             *,
-#             sample_weight=None,
-#             multioutput="uniform_average",
-#             force_finite=True,
-#     ):
-#     # 原版的R2无法应用于留一法 testY : testPredict = n : 1
-#     y_type, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
-#     check_consistent_length(y_true, y_pred, sample_weight)
-#
-#     weight = 1.0
-#
-#     numerator = (weight * (y_true - y_pred) ** 2).sum(axis=0, dtype=np.float64)
-#     denominator = (
-#             weight * (y_true - np.average(y_true, axis=0, weights=sample_weight)) ** 2
-#     ).sum(axis=0, dtype=np.float64)
-#
-#     return _assemble_r2_explained_variance(
-#         numerator=numerator,
-#         denominator=denominator,
-#         n_outputs=y_true.shape[1],
-#         multioutput=multioutput,
-#         force_finite=force_finite,
-#     )
-#
-#
-# @validate_params(
-#     {
-#         "y_true": ["array-like"],
-#         "y_pred": ["array-like"],
-#     },
-#     prefer_skip_nested_validation=True,
-# )
-def get_LOO_R2(testY, testPredict):
-    ssr = ((testPredict - testY.mean()) ** 2).sum()  # 预测数据和原始均值之差 的平方和
-    sst = ((testY - testY.mean()) ** 2).sum()  # 原始数据 和 均值之差  的平方和
-    r2 = ssr / sst
-    return r2
+
+# def get_LOO_R2(testY, testPredict):
+#     ssr = ((testPredict - testY.mean()) ** 2).sum()  # 预测数据和原始均值之差 的平方和
+#     sst = ((testY - testY.mean()) ** 2).sum()  # 原始数据 和 均值之差  的平方和
+#     r2 = ssr / sst
+#     return r2
 
 def get_MAPE(y_true, y_pred):
     # 平均绝对百分比误差（Mean Absolute Percentage Error）

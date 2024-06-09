@@ -11,8 +11,6 @@ import linTools
 
 '''主要参数'''
 kk = linSVR.LinKernel()
-kk.set_core_kind("m3")
-
 zu = linData.dataHandle()
 
 # 最好的位置：[1.70000000e+02 9.99832151e-01 1.06475491e-01 5.62875822e-03]
@@ -28,8 +26,9 @@ zu = linData.dataHandle()
 # coco = 25.0922963   # coef0
 # ee   = 0.1           # epsilon 判断是否进行惩罚
 
-filename = "E:\linBox\data\gaozhan.txt"
-# filename = "E:\linBox\data\\7yinWu.txt"
+# filename = 'E:\linBox\data\\7引物ci2.txt'     # 读取数据
+# filename = "E:\linBox\data\gaozhan.txt"
+filename = "E:\linBox\data\\7yinWu.txt"
 
 # bd_low1 = [0, 0.2, 0, 0, 0]
 # bd_up1 = [10, 1.0, 1, 10, 1]
@@ -37,15 +36,22 @@ filename = "E:\linBox\data\gaozhan.txt"
 # v_up1 = [1, 0.2, 0, 1, 1]
 # quick = [2, 0.199219146556476, 0.7603566551467286, 105.91960701561483, 0.7214001877527543, 0.23994180874780635]
 # quick = [1 , 0.7603522302232826 , 1, 3.983946940594069 , 2.8685841421335345 , 547.9574368219645]
-# quick = [3 , 0.4477273187016342 , 0.18550528809750733 , 132.31623800531509 , 0.8192811087670486 , 0.03943411689140924]
-quick = [2 , 0.8855672004783931, 1 , 0.526781158775183 , 8.729009035755565 , 0.807871141545152]
+# quick = [1, 200,   0.21017116, -27.13041273,   0.8, 1  ]
+# quick = [1, 2.12423523e+03,7.73679224e+01,5.49718114e+03, 2.00000000e-01, 1]
+# quick = [1, 2.42221836e+03, 8.05797203e+01, 3.94365763e+03, 2.11018326e-01, 1]
+# quick = [2,7.52613619, 0.18144923, 0.23432301, 0.22869458, 1]
+# quick = [3,44.48858332,  0.08121579,  0.07793215,  0.20264681, 1]          # m3
+# quick = [2,0.3975519 , 0.81348979, 2.15418699, 0.19789403,  0.20264681, 1]   # m2
+quick = [3,1.44715268,  1.45220254, -0.22055727,  0.61210873, 1]   # m3
 
+
+kk.set_core_kind("m3")
 dd   = quick[0]   # degree
-cc   = quick[3]   # 惩罚系数
-qq   = quick[1]   # 混合核函数内的比例系数
-tt   = quick[2]
-gg   = quick[4]   # gamma
-coco = quick[5]   # coef0
+cc   = quick[1]   # 惩罚系数
+gg   = quick[2]
+coco = quick[3]
+qq   = quick[4]   # 混合核函数内的比例系数
+tt   = quick[5]
 ee   = 0.1        # epsilon 判断是否进行惩罚
 
 
@@ -63,8 +69,8 @@ kk.set_coef(coco)
 # 获取训练与测试集合
 zu.set_file(filename)   # 文件名
 zu.set_mode(1)          # 0:均匀选择4b1   1:随机选择   2: 留1法
-zu.set_dataSize(70)         # 总样本数
-zu.set_numNeed(14)
+zu.set_dataSize(85)         # 总样本数
+zu.set_numNeed(17)
 
 sum_r2_train = 0
 sum_r2_test = 0
@@ -73,7 +79,7 @@ sum_RMSE_test = 0
 
 max_score = -1000   # 最好分数
 count = 0           # 循环次数
-ci = 200
+ci = 80
 num = 0
 
 while num < ci:

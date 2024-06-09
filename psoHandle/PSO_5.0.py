@@ -1,3 +1,5 @@
+# k折叠
+
 import numpy as np
 import random
 import matplotlib.pyplot as plt
@@ -6,6 +8,7 @@ from sklearn.model_selection import cross_val_score
 import linData
 import linSVR
 import linTools
+
 
 
 filename = 'E:\linBox\data\\7yinWu.txt'     # 读取数据
@@ -83,13 +86,6 @@ class PSO:
         svr = kk.do_svr(x_train, y_train)
         return svr.score(x_test, y_test), svr.score(x_train, y_train)
 
-    # @staticmethod
-    # def function(pos):    # 返回score
-    #     # kk.input_settings(dd, qq, tt, cc, gg, coco)              输入参数比对
-    #     kk.input_settings(dd, pos[1], pos[2], pos[0], pos[3], pos[4])
-    #     svr = kk.do_svr(x_train, y_train)
-    #     scores = cross_val_score(svr, x_all, y_all, cv=5, scoring='r2')
-    #     return scores.mean()
 
     def iterator(self):
         fitness = []
@@ -105,8 +101,9 @@ class PSO:
             print("==================================================================第 ", t, "次迭代==")
 
             for i in range(self.pN):
-                temp_r2_test, temp_r2_train = self.function(self.pos[i])                        # 获取当前粒子对应参数的 score ，即 训练集R^2
-                if float(temp_r2_test) > float(self.p_fit[i]) and (temp_r2_train < guoNiHe):    # 更新个体最优 and 防止过拟合
+                temp_r2_test, temp_r2_train = self.function(self.pos[i])                    # 获取当前粒子对应参数的 score ，即 训练集R^2
+                temp_r2_test = (temp_r2_test + temp_r2_train)/2
+                if float( temp_r2_test ) > float(self.p_fit[i]) and temp_r2_train < 0.92:    # 更新个体最优 and 防止过拟合
                     self.p_fit[i] = temp_r2_test
                     self.pbest[i] = self.pos[i]                                                 # 更新个体最优对应的的矩阵
                     # print("==================================================================个体", i, "最优更新==")
@@ -187,14 +184,14 @@ if __name__ == '__main__':
     # v_up1   = [   1,   0.5,    0.5,     1,    1  ]
     # dd  = 2
 
-    bd_low1 = [   80,    0,      0,      0,    80 ]
-    bd_up1  = [   120,   1,       1,    10,    120 ]
+    bd_low1 = [   0,    0,      0,      0,    0 ]
+    bd_up1  = [   50,   1,       1,    100,    120 ]
     v_low1  = [   0,     0,      0,      0,     0  ]
-    v_up1   = [   10,   0.5,    0.5,     1,    10  ]
-    dd  = 2
-    iter1 = 60
+    v_up1   = [   1,   0.5,    0.5,     1,    11  ]
+    dd  = 1
+    iter1 = 100
 
-    my_pso = PSO(pN=60, dim=5, max_iter=iter1, bd_low=bd_low1, bd_up=bd_up1, v_low=v_low1, v_up=v_up1)
+    my_pso = PSO(pN=100, dim=5, max_iter=iter1, bd_low=bd_low1, bd_up=bd_up1, v_low=v_low1, v_up=v_up1)
     fitness = my_pso.iterator()
 
     '''图像部分'''
